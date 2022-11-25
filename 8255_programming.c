@@ -6,7 +6,7 @@ void DELAY_milliseconds(uint16_t milliseconds)
 {
     while (milliseconds--)
     {
-        int x = 81; // The while statement consumes 11.89uS (11 clock cycles)
+        uint16_t x = 75; // The while statement consumes 11.89uS (11 clock cycles)
         while (x--)
             ; // So 10500 * 11.89uS = nearly 125mS
     }
@@ -19,6 +19,8 @@ __xdata __at (0x0003) uint8_t CONTROL_8255;
 
 __xdata __at (0x0008) uint8_t INSN_16x2;
 __xdata __at (0x0009) uint8_t DATA_16x2;
+
+char buf[] = {'0', '0', '0', '\0'};
 /*
 SFRX(A_8255, 0x8000);
 SFRX(B_8255, 0x8001);
@@ -72,6 +74,13 @@ void init_display(){
     write_command(0b10000000);
 }
 
+void uint8_to_buf(uint8_t num){
+    buf[2] = num % 10 + '0';
+    num /= 10;
+    buf[1] = num % 10 + '0';
+    num /= 10;
+    buf[0] = num + '0';
+}
 
 void main(void){
     DELAY_milliseconds(1000);
@@ -86,12 +95,15 @@ void main(void){
     change_cursor(0, 1);
     write_string("Andrej <3");
     while(1){
-        B_8255 = 0;
+        //clear_display();
+        //uint8_to_buf(RAMnum);
+        //write_string(buf);
+        //B_8255 = 0;
         P1_4 = 0;
         DELAY_milliseconds(1000);
-        B_8255 = RAMnum;
+        //B_8255 = RAMnum;
         P1_4 = 1;
-        RAMnum++;
+        //RAMnum++;
         DELAY_milliseconds(1000);
     }
 }
